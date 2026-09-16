@@ -1,0 +1,78 @@
+@startuml barbearia-class-diagram
+title Sistema de Agendamento de Barbearia - Diagrama de Classes
+skinparam classAttributeIconSize 0
+hide circle
+
+class Barbearia {
+  - id: Long
+  - nome: String
+  - telefone: String
+  - endereco: String
+}
+
+class Barbeiro {
+  - id: Long
+  - nome: String
+  - especialidade: String
+  - dataContratacao: LocalDate
+}
+
+class Cliente {
+  - id: Long
+  - nome: String
+  - telefone: String
+  - email: String
+}
+
+class Endereco {
+  - id: Long
+  - rua: String
+  - numero: String
+  - bairro: String
+  - cidade: String
+  - cep: String
+}
+
+class Servico {
+  - id: Long
+  - nome: String
+  - duracaoMinutos: Integer
+  - preco: BigDecimal
+}
+
+class Agendamento {
+  - id: Long
+  - dataHora: LocalDateTime
+  - status: StatusAgendamento
+}
+
+class ItemAgendamento {
+  - id: Long
+  - precoCobrado: BigDecimal
+}
+
+enum StatusAgendamento {
+  AGENDADO
+  CONFIRMADO
+  CONCLUIDO
+  CANCELADO
+}
+
+' ---- Relacionamentos ----
+
+Barbearia "1" *-- "N" Barbeiro : possui >
+
+Cliente "1" -- "1" Endereco : reside em >
+
+Cliente "1" -- "N" Agendamento : realiza >
+Barbeiro "1" -- "N" Agendamento : atende >
+
+Agendamento "1" *-- "N" ItemAgendamento
+Servico "1" -- "N" ItemAgendamento : cobrado em >
+
+note "Agendamento N:M Servico\nrealizado via classe associativa\nItemAgendamento (preco cobrado)" as N1
+ItemAgendamento .. N1
+
+Agendamento *-- StatusAgendamento
+
+@enduml

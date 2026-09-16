@@ -1,0 +1,80 @@
+@startuml barbearia-er-diagram
+title Sistema de Agendamento de Barbearia - Diagrama Entidade-Relacionamento (ORM)
+hide circle
+skinparam linetype ortho
+
+entity "barbearia" as barbearia {
+  * id : BIGINT <<PK>>
+  --
+  nome : VARCHAR(100)
+  telefone : VARCHAR(20)
+  endereco : VARCHAR(200)
+}
+
+entity "barbeiro" as barbeiro {
+  * id : BIGINT <<PK>>
+  --
+  nome : VARCHAR(100)
+  especialidade : VARCHAR(100)
+  data_contratacao : DATE
+  # barbearia_id : BIGINT <<FK>>
+}
+
+entity "cliente" as cliente {
+  * id : BIGINT <<PK>>
+  --
+  nome : VARCHAR(100)
+  telefone : VARCHAR(20)
+  email : VARCHAR(100)
+}
+
+entity "endereco" as endereco {
+  * id : BIGINT <<PK>>
+  --
+  rua : VARCHAR(150)
+  numero : VARCHAR(10)
+  bairro : VARCHAR(80)
+  cidade : VARCHAR(80)
+  cep : VARCHAR(10)
+  # cliente_id : BIGINT <<FK, UK>>
+}
+
+entity "servico" as servico {
+  * id : BIGINT <<PK>>
+  --
+  nome : VARCHAR(100)
+  duracao_minutos : INT
+  preco : DECIMAL(10,2)
+}
+
+entity "agendamento" as agendamento {
+  * id : BIGINT <<PK>>
+  --
+  data_hora : TIMESTAMP
+  status : VARCHAR(20)
+  # cliente_id : BIGINT <<FK>>
+  # barbeiro_id : BIGINT <<FK>>
+}
+
+entity "item_agendamento" as item_agendamento {
+  * id : BIGINT <<PK>>
+  --
+  preco_cobrado : DECIMAL(10,2)
+  # agendamento_id : BIGINT <<FK>>
+  # servico_id : BIGINT <<FK>>
+}
+
+barbearia ||--o{ barbeiro : "1:N"
+cliente ||--o| endereco : "1:1"
+cliente ||--o{ agendamento : "1:N"
+barbeiro ||--o{ agendamento : "1:N"
+agendamento ||--o{ item_agendamento : "1:N"
+servico ||--o{ item_agendamento : "1:N"
+
+note bottom of item_agendamento
+  Tabela associativa que resolve o
+  relacionamento N:M entre
+  agendamento e servico
+end note
+
+@enduml
